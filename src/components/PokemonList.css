@@ -1,5 +1,5 @@
-/* PokemonList.css */
-.container {
+/* PokemonPage.css */
+.centered-content {
     display: flex;
     flex-direction: column;
     align-items: center;

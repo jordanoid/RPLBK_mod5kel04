@@ -1,26 +1,21 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import './PokemonList.css';
+import { useContext, useState } from "react";
+import { PokemonContext } from "./PokemonContext";
+import './PokemonList.css'; // Import a CSS file for styling
 
 function PokemonList() {
-    const [pokemonList, setPokemonList] = useState([]);
+    const { pokemonList } = useContext(PokemonContext);
     const [currentPage, setCurrentPage] = useState(1);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`https://pokeapi.co/api/v2/pokemon/?offset=${(currentPage - 1) * 10}&limit=10`);
-                setPokemonList(response.data.results);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
+    const itemsPerPage = 10;
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
 
-        fetchData();
-    }, [currentPage]);
+    const totalPages = Math.ceil(pokemonList.length / itemsPerPage);
 
     const handleNextPage = () => {
-        setCurrentPage(currentPage + 1);
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
     };
 
     const handlePrevPage = () => {
@@ -30,11 +25,11 @@ function PokemonList() {
     };
 
     return (
-        <div className="container">
-            <h1 className="judul">Kelompok 4 Praktikum RPLBK</h1>
-            <h1 className="judul">Pokemon List Page : {currentPage}</h1>
+        <div className="centered-content">
+            <h1 className="judul">Tugas Modul 5 Kelompok 4 Praktikum RPBLK</h1>
+            <h1 className="judul">Pokemon Page {currentPage}</h1>
             <div className="card-container">
-                {pokemonList.map((pokemon, index) => (
+                {pokemonList.slice(startIndex, endIndex).map((pokemon, index) => (
                     <div className="card" key={index}>
                         {pokemon.name}
                     </div>
@@ -44,7 +39,9 @@ function PokemonList() {
                 <button onClick={handlePrevPage} disabled={currentPage === 1}>
                     Previous Page
                 </button>
-                <button onClick={handleNextPage}>Next Page</button>
+                <button onClick={handleNextPage} disabled={currentPage === totalPages}>
+                    Next Page
+                </button>
             </div>
         </div>
     );
